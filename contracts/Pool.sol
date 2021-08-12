@@ -20,9 +20,9 @@ contract Pool is ERC20 {
     }
 
     // Events
-    event Deposited(address indexed sender, uint256 amount);
-    event Removed(address indexed sender, uint256 amountLP);
-    event Swapped(address indexed sender, uint256 amount1, uint256 amount2);
+    event Deposited(address indexed sender, Token token, uint256 amount);
+    event Removed(address indexed sender, Token token, uint256 amountLP);
+    event Swapped(address indexed sender, Token token, uint256 amount1, uint256 amount2);
 
     constructor(
         address token1_,
@@ -34,38 +34,39 @@ contract Pool is ERC20 {
         _fees = fees_;
     }
 
-    function depositLiquitity(Token token, uint256 amount) public {
+    function depositLiquidity(Token token, uint256 amount) public {
         if (token == Token.token1) {
             _token1.transferFrom(msg.sender, address(this), amount);
         } else if (token == Token.token2) {
             _token2.transferFrom(msg.sender, address(this), amount);
         }
         _mint(msg.sender, amount);
-        emit Deposited(msg.sender, amount);
+        emit Deposited(msg.sender, token, amount);
     }
 
     function removeLiquidity(Token token, uint256 amountLP) public {
         if (token == Token.token1) {
-            _token1.transferFrom(address(this), msg.sender, amountLP);
+            _token1.transfer(msg.sender, amountLP);
         } else if (token == Token.token2) {
-            _token2.transferFrom(address(this), msg.sender, amountLP);
+            _token2.transfer(msg.sender, amountLP);
         }
         _burn(msg.sender, amountLP);
-        emit Removed(msg.sender, amountLP);
+        emit Removed(msg.sender, token, amountLP);
     }
 
     function swap(Token token, uint256 amountIn) public {
+        require(cfmm() != 0, "Pool : do not have liquidity to swap");
         uint256 amountOut;
         if (token == Token.token1) {
-            _token1.transferFrom(msg.sender, address(this), amountIn);
             amountOut = getAmountOut(_token1, _token2, amountIn);
-            _token2.transferFrom(address(this), msg.sender, amountOut);
+            _token1.transferFrom(msg.sender, address(this), amountIn);
+            _token2.transfer(msg.sender, amountOut);
         } else if (token == Token.token2) {
-            _token2.transferFrom(msg.sender, address(this), amountIn);
             amountOut = getAmountOut(_token2, _token1, amountIn);
-            _token1.transferFrom(address(this), msg.sender, amountOut);
+            _token1.transfer(msg.sender, amountOut);
+            _token2.transferFrom(msg.sender, address(this), amountIn);
         }
-        emit Swapped(msg.sender, amountIn, amountOut);
+        emit Swapped(msg.sender, token, amountIn, amountOut);
         // add fees management
     }
 
@@ -83,5 +84,17 @@ contract Pool is ERC20 {
         uint256 newReserveIn = reserveIn + amountIn;
         uint256 newReserveOut = cfmm() / newReserveIn;
         amountOut = reserveOut - newReserveOut;
+    }
+
+    function token1() public view returns (IERC20) {
+        return _token1;
+    }
+
+    function token2() public view returns (IERC20) {
+        return _token2;
+    }
+
+    function fees() public view returns (uint256) {
+        return _fees;
     }
 }

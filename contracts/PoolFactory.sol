@@ -10,7 +10,7 @@ contract PoolFactory {
     address private _owner;
 
     // token + token + fees => pool
-    mapping(address => mapping(address => mapping(uint256 => mapping(address => address)))) private _poolAddressByInfo;
+    mapping(address => mapping(address => mapping(uint256 => address))) private _poolAddressByInfo;
 
     // Events
     event OwnerSet(address oldOwner, address newOwner);
@@ -45,5 +45,9 @@ contract PoolFactory {
     ) public view returns (address) {
         (address token1, address token2) = (tokenA < tokenB) ? (tokenA, tokenB) : (tokenB, tokenA);
         return _poolAddressByInfo[token1][token2][fees];
+    }
+
+    function owner() public view returns (address) {
+        return _owner;
     }
 }
