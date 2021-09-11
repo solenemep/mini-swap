@@ -20,7 +20,7 @@ address token2\*
 
 uint256 fees\_
 
-###### Events
+### Events
 
 **Approval (address,address,uint256)**
 
@@ -74,7 +74,7 @@ address to
 
 uint256 value
 
-###### Methods
+### Methods
 
 **allowance view (address,address)**
 

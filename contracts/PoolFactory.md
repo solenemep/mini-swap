@@ -14,7 +14,7 @@ _Parameters_
 
 address owner\_
 
-###### Events
+### Events
 
 **Created (address,address,address)**
 
@@ -34,7 +34,7 @@ address oldOwner
 
 address newOwner
 
-###### Methods
+### Methods
 
 **create nonpayable (address,address,uint256)**
 
