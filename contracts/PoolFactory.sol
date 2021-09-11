@@ -5,6 +5,9 @@ import "./Pool.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
+/// @title pool factory
+/// @author Solène PETTIER
+/// @notice you can use this contract to create and manage pool factories
 contract PoolFactory {
     // State variables
     address private _owner;
@@ -20,12 +23,20 @@ contract PoolFactory {
         _owner = owner_;
     }
 
+    /// @notice set owner of the Pool factory
+    /// @dev only owner can use this function
+    /// @param owner_ new owner
     function setOwner(address owner_) external {
         require(msg.sender == _owner, "PoolFactory : only owner can set new owner");
         emit OwnerSet(_owner, owner_);
         _owner = owner_;
     }
 
+    /// @notice create a new pool
+    /// @dev create a pool, registered in a mapping
+    /// @param tokenA address of tokenA
+    /// @param tokenB address of tokenB
+    /// @param fees fees of this pool
     function create(
         address tokenA,
         address tokenB,
@@ -38,6 +49,11 @@ contract PoolFactory {
         _poolAddressByInfo[token1][token2][fees] = address(pool);
     }
 
+    /// @notice get specific pool
+    /// @param tokenA address of tokenA
+    /// @param tokenB address of tokenB
+    /// @param fees fees of this pool
+    /// @return address of the researched pool
     function getPoolAddressByInfo(
         address tokenA,
         address tokenB,
@@ -47,6 +63,8 @@ contract PoolFactory {
         return _poolAddressByInfo[token1][token2][fees];
     }
 
+    /// @notice get owner of contract
+    /// @return address of the owner
     function owner() public view returns (address) {
         return _owner;
     }

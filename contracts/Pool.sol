@@ -5,6 +5,10 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+/// @title pool
+/// @author Solène PETTIER
+/// @notice you can use this contract to interact with pool and swap tokens
+/// @dev in existant pool, manage deposit and remove liquidity in exchange of LP token (ERC20)
 contract Pool is ERC20 {
     using Address for address payable;
 
@@ -34,6 +38,10 @@ contract Pool is ERC20 {
         _fees = fees_;
     }
 
+    /// @notice deposit liquidity in existant pool
+    /// @dev mint an amount of LP token (ERC20) to depositer
+    /// @param token address of token (choosed between tokenA & tokenB)
+    /// @param amount amount of token to deposit
     function depositLiquidity(Token token, uint256 amount) public {
         if (token == Token.token1) {
             _token1.transferFrom(msg.sender, address(this), amount);
@@ -44,6 +52,10 @@ contract Pool is ERC20 {
         emit Deposited(msg.sender, token, amount);
     }
 
+    /// @notice remove liquidity in existant pool
+    /// @dev burn this amount of LP token (ERC20) to remover
+    /// @param token address of token (choosed between tokenA & tokenB)
+    /// @param amountLP amount of LP token to remove in exchange of token
     function removeLiquidity(Token token, uint256 amountLP) public {
         if (token == Token.token1) {
             _token1.transfer(msg.sender, amountLP);
@@ -54,6 +66,10 @@ contract Pool is ERC20 {
         emit Removed(msg.sender, token, amountLP);
     }
 
+    /// @notice swap tokens of the pool
+    /// @param token address of token (choosed between tokenA & tokenB)
+    /// @param amountIn amount of choosen token entering
+    /// @dev swap of token with the other token of the pool with calculated amount
     function swap(Token token, uint256 amountIn) public {
         require(cfmm() != 0, "Pool : do not have liquidity to swap");
         uint256 amountOut;
@@ -70,10 +86,17 @@ contract Pool is ERC20 {
         // add fees management
     }
 
+    /// @notice function that return the actual constant of the pool
+    /// @return constant based on number of tokenA * number of tokenB of pool
     function cfmm() public view returns (uint256) {
         return _token1.balanceOf(address(this)) * _token2.balanceOf(address(this));
     }
 
+    /// @notice calculate amountOut based on parameters of swap and constant
+    /// @param tokenIn address of tokenIn (choosed between tokenA & tokenB)
+    /// @param tokenOut address of tokenOut (based on tokenIn)
+    /// @param amountIn amount of choosen tokenIn entering
+    /// @dev function called in swap function to calculate amountOut based on amountIn
     function getAmountOut(
         IERC20 tokenIn,
         IERC20 tokenOut,
@@ -83,17 +106,23 @@ contract Pool is ERC20 {
         uint256 reserveOut = tokenOut.balanceOf(address(this));
         uint256 newReserveIn = reserveIn + amountIn;
         uint256 newReserveOut = cfmm() / newReserveIn;
-        amountOut = reserveOut - newReserveOut;
+        return amountOut = reserveOut - newReserveOut;
     }
 
+    /// @notice get token1 address
+    /// @return address of token1
     function token1() public view returns (IERC20) {
         return _token1;
     }
 
+    /// @notice get token2 address
+    /// @return address of token2
     function token2() public view returns (IERC20) {
         return _token2;
     }
 
+    /// @notice get fees of pool
+    /// @return fees
     function fees() public view returns (uint256) {
         return _fees;
     }

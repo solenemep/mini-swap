@@ -4,7 +4,7 @@ const hre = require('hardhat');
 const { deployed } = require('./deployed');
 
 async function main() {
-  const [deployer] = await hre.ethers.getSigners();
+  const [deployer, owner] = await hre.ethers.getSigners();
   console.log('Deploying contracts with the account:', deployer.address);
 
   // We get the contract to deploy
