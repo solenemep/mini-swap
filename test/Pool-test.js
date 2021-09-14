@@ -225,13 +225,13 @@ describe('Pool', async function () {
       it(`returns right value`, async function () {
         await pool.connect(reserve).depositLiquidity(0, AMOUNT2);
         // only deposited on one side, constant remains null
-        expect(await pool.getAmountOut(token1.address, token2.address, AMOUNT_SWAP)).to.equal(0);
+        expect(await pool.getAmountOut(0, AMOUNT_SWAP)).to.equal(0);
         await pool.connect(reserve).depositLiquidity(1, AMOUNT2);
         // deposited on two side equally : 200
-        expect(await pool.getAmountOut(token1.address, token2.address, AMOUNT_SWAP)).to.equal(100);
+        expect(await pool.getAmountOut(0, AMOUNT_SWAP)).to.equal(100);
         await pool.connect(reserve).depositLiquidity(0, AMOUNT1);
         // desposited on 1 : 300, on 2 : 200
-        expect(await pool.getAmountOut(token1.address, token2.address, AMOUNT_SWAP)).to.equal(80);
+        expect(await pool.getAmountOut(0, AMOUNT_SWAP)).to.equal(80);
       });
     });
   });

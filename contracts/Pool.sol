@@ -74,11 +74,11 @@ contract Pool is ERC20 {
         require(cfmm() != 0, "Pool : do not have liquidity to swap");
         uint256 amountOut;
         if (token == Token.token1) {
-            amountOut = getAmountOut(_token1, _token2, amountIn);
+            amountOut = getAmountOut(Token.token1, amountIn);
             _token1.transferFrom(msg.sender, address(this), amountIn);
             _token2.transfer(msg.sender, amountOut);
         } else if (token == Token.token2) {
-            amountOut = getAmountOut(_token2, _token1, amountIn);
+            amountOut = getAmountOut(Token.token2, amountIn);
             _token1.transfer(msg.sender, amountOut);
             _token2.transferFrom(msg.sender, address(this), amountIn);
         }
@@ -93,20 +93,23 @@ contract Pool is ERC20 {
     }
 
     /// @notice calculate amountOut based on parameters of swap and constant
-    /// @param tokenIn address of tokenIn (choosed between tokenA & tokenB)
-    /// @param tokenOut address of tokenOut (based on tokenIn)
+    /// @param token address of tokenIn (choosed between tokenA & tokenB)
     /// @param amountIn amount of choosen tokenIn entering
     /// @dev function called in swap function to calculate amountOut based on amountIn
-    function getAmountOut(
-        IERC20 tokenIn,
-        IERC20 tokenOut,
-        uint256 amountIn
-    ) public view returns (uint256 amountOut) {
-        uint256 reserveIn = tokenIn.balanceOf(address(this));
-        uint256 reserveOut = tokenOut.balanceOf(address(this));
-        uint256 newReserveIn = reserveIn + amountIn;
-        uint256 newReserveOut = cfmm() / newReserveIn;
-        return amountOut = reserveOut - newReserveOut;
+    function getAmountOut(Token token, uint256 amountIn) public view returns (uint256 amountOut) {
+        if (token == Token.token1) {
+            uint256 reserveIn = _token1.balanceOf(address(this));
+            uint256 reserveOut = _token2.balanceOf(address(this));
+            uint256 newReserveIn = reserveIn + amountIn;
+            uint256 newReserveOut = cfmm() / newReserveIn;
+            return amountOut = reserveOut - newReserveOut;
+        } else if (token == Token.token2) {
+            uint256 reserveIn = _token2.balanceOf(address(this));
+            uint256 reserveOut = _token1.balanceOf(address(this));
+            uint256 newReserveIn = reserveIn + amountIn;
+            uint256 newReserveOut = cfmm() / newReserveIn;
+            return amountOut = reserveOut - newReserveOut;
+        }
     }
 
     /// @notice get token1 address
