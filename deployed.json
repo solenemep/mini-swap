@@ -1,11 +1,7 @@
 {
-  "Token1": { "rinkeby": { "address": "0x9C07889781F2913E660bD80b1652E8D7Cc156B65" } },
-  "Token2": { "rinkeby": { "address": "0x29085D91a43f9C94856DFc3164481a9c5f6E7cA6" } },
+  "Token1": { "rinkeby": { "address": "0x7Cd0CCD2607B356e5d7a79d2473faa72be42581A" } },
+  "Token2": { "rinkeby": { "address": "0xe57365b481f3c275075D62ADe78CC7042659515E" } },
   "PoolFactory": { "rinkeby": { "address": "0x9FaC6DD7AbE4f547e53A0C2647333464F9125Fd3" } },
-  "Token3": {
-    "rinkeby": { "address": "0xbcd8fe77Fd9d1a0df10b36443A55Ba59f7812C44" }
-  },
-  "Token4": {
-    "rinkeby": { "address": "0x61a7Dddc9D24d369d42569C5b0945F102eD4186E" }
-  }
+  "Token3": { "rinkeby": { "address": "0x4C620c45dE02c44AaB85255d6192226002e60Ce5" } },
+  "Token4": { "rinkeby": { "address": "0xBe629944053Ece21176c5133575fDFFa5A0893d4" } }
 }
